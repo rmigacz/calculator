@@ -1,0 +1,110 @@
+@startuml
+title Calculator Deterministic Finite State Machine (DFSM)
+
+left to right direction
+
+[*] --> CLEARED
+
+state CLEARED
+state ARG1_INT
+state ARG1_DEC
+state OP
+state ARG2_INT
+state ARG2_DEC
+state RES
+
+' --- CLEARED ---
+CLEARED --> ARG1_INT : [Digit]
+CLEARED --> ARG1_DEC : [DOT]
+CLEARED --> CLEARED : [BinaryOpr]
+CLEARED --> CLEARED : [UnaryOpr]
+CLEARED --> CLEARED : [=]
+CLEARED --> CLEARED : [C]
+CLEARED --> CLEARED : [CE]
+
+' --- ARG1_INT ---
+ARG1_INT --> ARG1_INT : [Digit]
+ARG1_INT --> ARG1_INT : [UnaryOpr]
+ARG1_INT --> ARG1_DEC : [DOT]
+ARG1_INT --> OP       : [BinaryOpr]
+ARG1_INT --> RES      : [=]
+ARG1_INT --> CLEARED  : [C]
+ARG1_INT --> CLEARED  : [CE]
+
+' --- ARG1_DEC ---
+ARG1_DEC --> ARG1_DEC : [Digit]
+ARG1_DEC --> ARG1_DEC : [DOT]
+ARG1_DEC --> ARG1_DEC : [UnaryOpr]
+ARG1_DEC --> OP       : [BinaryOpr]
+ARG1_DEC --> RES      : [=]
+ARG1_DEC --> CLEARED  : [C]
+ARG1_DEC --> CLEARED  : [CE]
+
+' --- OP ---
+OP --> OP         : [BinaryOpr]
+OP --> OP         : [UnaryOpr]
+OP --> OP         : [CE]
+OP --> ARG2_INT   : [Digit]
+OP --> ARG2_DEC   : [DOT]
+OP --> RES        : [=]
+OP --> CLEARED    : [C]
+
+' --- ARG2_INT ---
+ARG2_INT --> ARG2_INT : [Digit]
+ARG2_INT --> ARG2_INT : [UnaryOpr]
+ARG2_INT --> ARG2_DEC : [DOT]
+ARG2_INT --> OP       : [BinaryOpr]
+ARG2_INT --> OP       : [CE]
+ARG2_INT --> RES      : [=]
+ARG2_INT --> CLEARED  : [C]
+
+' --- ARG2_DEC ---
+ARG2_DEC --> ARG2_DEC : [Digit]
+ARG2_DEC --> ARG2_DEC : [DOT]
+ARG2_DEC --> ARG2_DEC : [UnaryOpr]
+ARG2_DEC --> OP       : [BinaryOpr]
+ARG2_DEC --> OP       : [CE]
+ARG2_DEC --> RES      : [=]
+ARG2_DEC --> CLEARED  : [C]
+
+' --- RES ---
+RES --> ARG1_INT : [Digit]
+RES --> ARG1_DEC : [DOT]
+RES --> OP       : [BinaryOpr]
+RES --> RES      : [UnaryOpr]
+RES --> RES      : [=]
+RES --> RES      : [CE]
+RES --> CLEARED  : [C]
+
+' --- Hidden backbone to enforce width ---
+CLEARED -[hidden]-> ARG1_INT
+ARG1_INT -[hidden]-> ARG1_DEC
+ARG1_DEC -[hidden]-> OP
+OP -[hidden]-> ARG2_INT
+ARG2_INT -[hidden]-> ARG2_DEC
+ARG2_DEC -[hidden]-> RES
+
+legend right
+  |= Σ (inputs) |= Meaning |
+  | Digit | digit key (0-9) |
+  | DOT | decimal point (.) |
+  | BinaryOpr | binary operator (+ - x /) |
+  | UnaryOpr | unary operator (%, +/-, SQRT) |
+  | "=" | equals |
+  | C | all clear |
+  | CE | clear entry |
+
+  |= Q (states) |= Meaning |
+  | CLEARED | initial / cleared |
+  | ARG1_INT | entering arg1 (integer) |
+  | ARG1_DEC | entering arg1 (decimal) |
+  | OP | operator selected |
+  | ARG2_INT | entering arg2 (integer) |
+  | ARG2_DEC | entering arg2 (decimal) |
+  | RES | result displayed |
+
+  |= q0 (initial state) | CLEARED |
+  |= F (accepting states) | RES |
+endlegend
+
+@enduml

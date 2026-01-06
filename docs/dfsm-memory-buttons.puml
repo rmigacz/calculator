@@ -1,0 +1,19 @@
+@startuml
+title DFSM fragment: memory states explode
+
+[*] --> MEM_0
+MEM_0 --> MEM_1 : M+ (store 1)
+MEM_1 --> MEM_2 : M+ (store 2)
+MEM_2 --> MEM_3 : M+ (store 3)
+
+MEM_0 --> MEM_0 : MRC (display 0)
+MEM_1 --> MEM_1 : MRC (display 1)
+MEM_2 --> MEM_2 : MRC (display 2)
+MEM_3 --> MEM_3 : MRC (display 3)
+
+note right of MEM_3
+  This pattern must continue for every possible
+  stored value, so the DFSM needs an impractically
+  large number of memory states.
+end note
+@enduml
